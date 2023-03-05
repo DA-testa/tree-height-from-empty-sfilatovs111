@@ -2,51 +2,47 @@
 
 import sys
 
+
 def read_input():
     n = int(input().strip())
-    parents = list(map(int, input().strip().split()))
+    parents = list(map(int, input().split()))
     return n, parents
 
 def compute_height(n, parents):
-    tree = {}
-    root = None
-    for i in range(n):
-        parent = parents[i]
-        if parent == -1:
-            root = i
-        else:
-            if parent not in tree:
-                tree[parent] = []
-            tree[parent].append(i)
+    height = [0] * n
+    max_height = 0
 
-    height = 1
-    q = [root]
-    while q:
-        level_size = len(q)
-        for i in range(level_size):
-            node = q.pop(0)
-            if node in tree:
-                q += tree[node]
-        if q:
-            height += 1
+    for vertex in range(n):
+        if height[vertex] != 0:
+            continue
 
-    return height
+        c_height = 0
+        i = vertex
+        while i != -1:
+            if height[i] != 0:
+                c_height += height[i]
+                break
+            c_height += 1
+            i = parents[i]
+
+        max_height = max(max_height, c_height)
+
+        i = vertex
+        while i != -1:
+            if height[i] != 0:
+                break
+            height[i] = c_height
+            c_height -= 1
+            i = parents[i]
+
+    return max_height
 
 def main():
-    try:
-        n, parents = read_input()
-    except EOFError:
-        print("Input ended unexpectedly", file=sys.stderr)
-        sys.exit(1)
+    n, parents = read_input()
+    print(compute_height(n, parents))
 
 
-
-  
-    height = compute_height(n, parents)
-    print(height)
-
-
-
-
-if __name__ == "__main__":
+    
+    
+if __name__ == '__main__':
     main()
