@@ -1,38 +1,40 @@
 #Sergejs Filatovs 221RDB111 16. grupa
 
-
 import sys
+import numpy
 import threading
-def calc_tree_height(num_nodes, ancestors):
-    descendants = [[] for i in range(num_nodes)]
-    
-    root = None
-    for i in range(num_nodes):
-        if ancestors[i] == -1:
-            root = i
+
+def compute_height(num_nodes, parents):
+    parent=numpy.zeros(num_nodes)
+    def height(i):
+        if parent[i] !=0:
+            return parent[i]
+        if parents[i] == -1:
+            parent[i] = 1
         else:
-            descendants[ancestors[i]].append(i)
-
-            
-            
-    def dfs(node):
-        if not descendants[node]:
-            return 1
-        return max([dfs(child) for child in descendants[node]]) + 1
-
-    return dfs(root)
-
-
+            parent[i]=height(parents[i]) +1
+        return parent[i]
+    
+    for i in range(num_nodes):
+        height(i)
+    return int(max(parent))
 
 def main():
-    num_nodes = int(input().strip())
-    ancestors = list(map(int, input().split()))
-    print(calc_tree_height(num_nodes, ancestors))
-
-    
-if __name__ == '__main__':
-    sys.setrecursionlimit(10**7)
-    threading.stack_size(2**27)
-    thread = threading.Thread(target=main)
-    thread.start()
-
+    mode = input()
+    if "F" in mode:
+        filename = input()
+        if "a" not in filename:
+           with open(str("test/"+filename), mode = "r") as f:
+               g = int(f.readline())
+               parentOfNode = list(map(int, f.readline().split()))
+        else:
+            print("kļūda")
+    elif "I" in mode:
+        g = int(input())
+        parentOfNode = list(map(int, input().split()))
+    else: 
+        print("kļūda")
+    print(compute_height(g, parentOfNode))
+sys.setrecursionlimit(10**7)
+threading.stack_size(2**27)
+threading.Thread(target=main).start()
