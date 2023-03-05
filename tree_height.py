@@ -1,48 +1,50 @@
 #Sergejs Filatovs 221RDB111 16. grupa
 
 import sys
+import threading
+import numpy
 
 
-def read_input():
-    n = int(input().strip())
-    parents = list(map(int, input().split()))
-    return n, parents
 
-def compute_height(n, parents):
-    height = [0] * n
-    max_height = 0
+def compute_height(num_nodes, parents):
+    parent=numpy.zeros(num_nodes)
+    def height(i):
+        if parent[i] !=0:
+            return parent[i]
+        if parents[i] == -1:
+            parent[i] = 1
+        else:
+            parent[i]=height(parents[i]) +1
+        return parent[i]
 
-    for vertex in range(n):
-        if height[vertex] != 0:
-            continue
 
-        c_height = 0
-        i = vertex
-        while i != -1:
-            if height[i] != 0:
-                c_height += height[i]
-                break
-            c_height += 1
-            i = parents[i]
 
-        max_height = max(max_height, c_height)
+  
+    for i in range(num_nodes):
+        height(i)
+    return int(max(parent))
 
-        i = vertex
-        while i != -1:
-            if height[i] != 0:
-                break
-            height[i] = c_height
-            c_height -= 1
-            i = parents[i]
 
-    return max_height
+
 
 def main():
-    n, parents = read_input()
-    print(compute_height(n, parents))
+    mode = input()
+    if "F" in mode:
+        filename = input()
+        if "a" not in filename:
+           with open(str("test/"+filename), mode = "r") as f:
+               n = int(f.readline())
+               parentOfNode = list(map(int, f.readline().split()))
+        else:
+            print("kļūda")
+    elif "I" in mode:
+        g = int(input())
+        parentOfNode = list(map(int, input().split()))
+    else: 
+        print("kļūda")
+    print(compute_height(g, parentOfNode))
 
-
-    
-    
-if __name__ == '__main__':
-    main()
+  
+sys.setrecursionlimit(10**7)
+threading.stack_size(2**27)  
+threading.Thread(target=main).start()
