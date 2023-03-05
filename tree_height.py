@@ -1,33 +1,53 @@
-# python3
+#Sergejs Filatovs 221RDB111 16. grupa
 
 import sys
 import threading
 import numpy
 
 
-def compute_height(n, parents):
-    # Write this function
-    max_height = 0
-    # Your code here
-    return max_height
+def atrast_maksimalo_augstumu(skaits, vecaki):
+    maksimalais_augstums = 0
+    augstumi = [0] * skaits
+    for mezgls in range(skaits):
+        if augstumi[mezgls] != 0:
+            continue
+        augstums = 0
+        i = mezgls
+        
+        while i != -1:
+            if augstumi[i] != 0:
+                augstums += augstumi[i]
+                break
+            augstums += 1
+            i = vecaki[i]
+        maksimalais_augstums = max(maksimalais_augstums, augstums)
+        i = mezgls
+        
+        while i != -1:
+            if augstumi[i] != 0:
+                break
+            augstumi[i] = augstums
+            augstums -= 1
+            i = vecaki[i]
+
+
+    return maksimalais_augstums
 
 
 def main():
-    # implement input form keyboard and from files
-    
-    # let user input file name to use, don't allow file names with letter a
-    # account for github input inprecision
-    
-    # input number of elements
-    # input values in one variable, separate with space, split these values in an array
-    # call the function and output it's result
-    pass
+    ievades_veids = input()
+    skaits = int(input())
+    vecaki = list(map(int, input().strip().split()))
 
-# In Python, the default limit on recursion depth is rather low,
-# so raise it here for this problem. Note that to take advantage
-# of bigger stack, we have to launch the computation in a new thread.
-sys.setrecursionlimit(10**7)  # max depth of recursion
-threading.stack_size(2**27)   # new thread will get stack of such size
+    print(atrast_maksimalo_augstumu(skaits, vecaki))
+
+
+
+    
+    
+    
+
+sys.setrecursionlimit(10**7)
+threading.stack_size(2**27)
 threading.Thread(target=main).start()
 main()
-# print(numpy.array([1,2,3]))
